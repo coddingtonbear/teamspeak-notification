@@ -1,0 +1,2 @@
+PyGTK
+teamspeak3
