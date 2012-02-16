@@ -1,4 +1,4 @@
-# Skype notifier
+# TeamSpeak Notifier
 
 Using TeamSpeak as your office communication channel can be difficult-- especially
 if you don't have your headphones on.
