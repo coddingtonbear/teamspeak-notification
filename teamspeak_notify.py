@@ -35,6 +35,11 @@ class TeamspeakNotifier(object):
     def __init__(self):
         super(TeamspeakNotifier, self).__init__()
         pynotify.init('TeamspeakNotifier')
+        self.notification = pynotify.Notification(
+            "Ready", 
+            "TeamSpeak Notifier is listening for messages."
+            )
+        self.notification.show()
         self.connect()
 
     def get_active_window_title(self):
@@ -54,16 +59,19 @@ class TeamspeakNotifier(object):
                     return match.group("name")[1:-1]
 
     def notify(self, message):
-        msg = pynotify.Notification("%s said" % message['invokername'], message['msg'])
-        msg.show()
+        if message.command == 'notifytextmessage':
+            self.notification.update("%s said" % message['invokername'], message['msg'])
+            self.notification.show()
+        elif message.command == 'notifytalkstatuschange' and message['status'] == '1':
+            self.notification.update("Somebody is talking...")
+            self.notification.show()
 
     def main(self):
         while True:
             try:
                 messages = self.api.get_messages()
                 for message in messages:
-                    if self.get_active_window_title() != self.TEAMSPEAK_TITLE \
-                        and message.command == 'notifytextmessage':
+                    if self.get_active_window_title() != self.TEAMSPEAK_TITLE:
                         self.notify(message)
             except EOFError:
                 self.connect()
