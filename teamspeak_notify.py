@@ -20,6 +20,7 @@
 # CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
 # TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 # SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+import logging
 import re
 import time
 from subprocess import Popen, PIPE
@@ -29,15 +30,17 @@ import teamspeak3
 
 class TeamspeakNotifier(object):
     CHECK_INTERVAL = 0.25
-    RECONNECT_INTERVAL = 5
+    RECONNECT_INTERVAL = 1
     TEAMSPEAK_TITLE = "TeamSpeak 3"
 
     def __init__(self):
         super(TeamspeakNotifier, self).__init__()
+        self.logger = logging.getLogger('TeamspeakNotifier')
+
         pynotify.init('TeamspeakNotifier')
         self.notification = pynotify.Notification(
-            "Ready", 
-            "TeamSpeak Notifier is listening for messages."
+            "Starting",
+            "TeamspeakNotifier is attempting to find your instance of Teamspeak."
             )
         self.notification.show()
         self.connect()
@@ -58,13 +61,20 @@ class TeamspeakNotifier(object):
                 if match != None:
                     return match.group("name")[1:-1]
 
+    def _update_notification(self, title, message = ''):
+        self.logger.debug("Posting Notification: [%s]%s" % (
+                    title,
+                    message,
+                )
+            )
+        self.notification.update(title, message)
+        self.notification.show()
+
     def notify(self, message):
         if message.command == 'notifytextmessage':
-            self.notification.update("%s said" % message['invokername'], message['msg'])
-            self.notification.show()
+            self._update_notification("%s said" % message['invokername'], message['msg'])
         elif message.command == 'notifytalkstatuschange' and message['status'] == '1':
-            self.notification.update("Somebody is talking...")
-            self.notification.show()
+            self._update_notification("Somebody is talking...")
 
     def main(self):
         while True:
@@ -73,21 +83,30 @@ class TeamspeakNotifier(object):
                 for message in messages:
                     if self.get_active_window_title() != self.TEAMSPEAK_TITLE:
                         self.notify(message)
-            except EOFError:
+            except (teamspeak3.TeamspeakConnectionLost, EOFError, ) as e:
+                self._update_notification("Teamspeak is Unavailable", "Teamspeak information is now unavailable.")
+                self.logger.warning("Connection lost.")
                 self.connect()
             time.sleep(self.CHECK_INTERVAL)
 
     def connect(self):
         while True:
             try:
+                self.logger.info("Attempting to connect.")
                 self.api = teamspeak3.Client()
                 self.api.subscribe()
+                self.logger.info("Connection established.")
+                self._update_notification(
+                        "Ready", 
+                        "Teamspeak is now listening for messages."
+                    )
                 return True
             except Exception as e:
+                self.logger.exception(e)
                 pass
             time.sleep(self.RECONNECT_INTERVAL)
 
 if __name__ == '__main__':
     app = TeamspeakNotifier()
     app.main()
-    
+
