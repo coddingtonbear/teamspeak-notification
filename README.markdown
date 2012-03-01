@@ -16,6 +16,16 @@ recieved a message.
 
 You can either run the program directly like:
 
-    python teamspeak_notify.py &
+    teamspeak-notifier &
 
-Or add it to your automatically started applications.
+Add it to your automatically started applications.
+
+## Arguments
+
+You can run it with any of the following arguments:
+
+ - **--info** Allows you to see information about communication with Teamspeak.
+ - **--debug** Allows you to see more information than the above.
+ - **--logfile**  Allows you to specify a file to log errors to.
+
+
