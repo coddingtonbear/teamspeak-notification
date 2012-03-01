@@ -59,16 +59,21 @@ class TeamspeakNotifier(object):
         if message.ultimate_origination == 'notifytextmessage':
             if not self.teamspeak_is_active() and not self.message_is_mine(message):
                 if message['targetmode'] == self.TARGETMODE_CLIENT:
-                    title = "%s said (in private message)" % (message['invokername'], )
+                    title = "%s said (via private message)" % (
+                            self.get_name_for_message(message), 
+                        )
                 else:
-                    title = "%s said" % (message['invokername'], )
+                    title = "%s said" % (
+                            self.get_name_for_message(message), 
+                        )
                 self._update_notification(title, message['msg'])
         elif message.ultimate_origination == 'notifytalkstatuschange':
             if not self.teamspeak_is_active() and not self.message_is_mine(message):
                 if message['status'] == '1':
                     self._update_notification(
-                                "%s is talking..." % 
-                                self.get_name_for_message(message)
+                                    "%s is talking..." % (
+                                    self.get_name_for_message(message),
+                                )
                             )
         elif message.ultimate_origination in ('notifyclientmoved', 'notifyclientleftview', 'notifycliententerview', ):
             self.send_client_update_commands()
