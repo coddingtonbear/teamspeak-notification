@@ -11,6 +11,9 @@ class TeamspeakNotifier(object):
     RECONNECT_INTERVAL = 1
     TEAMSPEAK_TITLE = "TeamSpeak 3"
     DEFAULT_NAME = "Somebody"
+    TARGETMODE_CLIENT = '1'
+    TARGETMODE_CHANNEL = '2'
+    TARGETMODE_SERVER = '3'
 
     def __init__(self):
         super(TeamspeakNotifier, self).__init__()
@@ -55,7 +58,11 @@ class TeamspeakNotifier(object):
     def notify(self, message):
         if message.ultimate_origination == 'notifytextmessage':
             if not self.teamspeak_is_active() and not self.message_is_mine(message):
-                self._update_notification("%s said" % message['invokername'], message['msg'])
+                if message['targetmode'] == self.TARGETMODE_CLIENT:
+                    title = "%s said (in private message)" % (message['invokername'], )
+                else:
+                    title = "%s said" % (message['invokername'], )
+                self._update_notification(title, message['msg'])
         elif message.ultimate_origination == 'notifytalkstatuschange':
             if not self.teamspeak_is_active() and not self.message_is_mine(message):
                 if message['status'] == '1':
