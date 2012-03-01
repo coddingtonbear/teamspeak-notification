@@ -20,7 +20,6 @@ setup(
     entry_points={'console_scripts': [
         'teamspeak-notifier = teamspeaknotifier:run_from_cmdline']},
     install_requires = [
-            'PyGTK',
             'teamspeak3>=1.3',
         ]
 )
