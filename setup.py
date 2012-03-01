@@ -12,8 +12,8 @@ setup(
     classifiers=[
         'Intended Audience :: Developers',
         'License :: OSI Approved :: MIT License',
-        'Operating System :: Linux',
         'Programming Language :: Python',
+        'Operating System :: POSIX :: Linux',
         'Topic :: Utilities',
     ],
     packages=['teamspeaknotifier',],
