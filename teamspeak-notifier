@@ -1,0 +1,4 @@
+#!/usr/bin/python
+import teamspeaknotifier
+
+teamspeaknotifier.run_from_cmdline()

@@ -20,6 +20,9 @@
 # CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
 # TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 # SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+__author__ = 'Adam Coddington <me@adamcoddington.net>'
+__version__ = (1, 0, 0)
+
 import logging
 from optparse import OptionParser
 import re
@@ -162,7 +165,7 @@ class TeamspeakNotifier(object):
                 pass
             time.sleep(self.RECONNECT_INTERVAL)
 
-if __name__ == '__main__':
+def run_from_cmdline():
     parser = OptionParser()
     parser.add_option('-d', '--debug', dest='debug', default=False, action='store_true')
     parser.add_option('-i', '--info', dest='info', default=False, action='store_true')
@@ -180,3 +183,5 @@ if __name__ == '__main__':
     app = TeamspeakNotifier()
     app.main()
 
+def get_version():
+    return '.'.join(str(bit) for bit in __version__)
