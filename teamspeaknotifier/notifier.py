@@ -98,21 +98,27 @@ class TeamspeakNotifier(object):
         self.logger.info("Updated client list: %s" % self.clients)
 
     def message_is_mine(self, message):
-        if 'clid' in message.keys():
-            return message['clid'] == self.identity
-        elif 'invokerid' in message.keys():
-            return message['invokerid'] == self.identity
-        elif 'invokername' in message.keys():
-            return self.clients[self.identity] == message['invokername']
+        try:
+            if 'clid' in message.keys():
+                return message['clid'] == self.identity
+            elif 'invokerid' in message.keys():
+                return message['invokerid'] == self.identity
+            elif 'invokername' in message.keys():
+                return self.clients[self.identity] == message['invokername']
+        except KeyError:
+            pass
         return False
 
     def get_name_for_message(self, message):
-        if 'clid' in message.keys():
-            return self.clients[message['clid']]
-        elif 'invokerid' in message.keys():
-            return self.clients[message['invokerid']]
-        elif 'invokername' in message.keys():
-            return message['invokername']
+        try:
+            if 'clid' in message.keys():
+                return self.clients[message['clid']]
+            elif 'invokerid' in message.keys():
+                return self.clients[message['invokerid']]
+            elif 'invokername' in message.keys():
+                return message['invokername']
+        except KeyError:
+            pass
         return self.DEFAULT_NAME
 
     def teamspeak_is_active(self):
