@@ -21,7 +21,7 @@
 # TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 # SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 __author__ = 'Adam Coddington <me@adamcoddington.net>'
-__version__ = (1, 0, 5)
+__version__ = (1, 1, 0)
 
 def run_from_cmdline():
     import logging

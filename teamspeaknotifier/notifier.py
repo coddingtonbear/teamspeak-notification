@@ -142,8 +142,10 @@ class TeamspeakNotifier(object):
                 messages = self.api.get_messages()
                 for message in messages:
                     self.notify(message)
-            except (teamspeak3.TeamspeakConnectionLost, EOFError, ) as e:
-                self._update_notification("Teamspeak is Unavailable", "Teamspeak does not appear to be running.")
+            except teamspeak3.TeamspeakConnectionError:
+                self._update_notification(
+                        "Teamspeak is Unavailable", "Teamspeak does not appear to be running."
+                    )
                 self.logger.warning("Connection lost.")
                 self.connect()
             time.sleep(self.CHECK_INTERVAL)
@@ -161,6 +163,8 @@ class TeamspeakNotifier(object):
                     )
                 self.send_client_update_commands()
                 return True
+            except teamspeak3.exceptions.TeamspeakConnectionLost:
+                pass
             except Exception as e:
                 self.logger.exception(e)
                 pass
