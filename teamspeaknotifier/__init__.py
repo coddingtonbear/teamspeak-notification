@@ -39,7 +39,7 @@ def run_from_cmdline():
     if options.info:
         kwargs['level'] = logging.INFO
     if options.logfile:
-        kwargs['filename'] = logging.logfile
+        kwargs['filename'] = args.logfile
     logging.basicConfig(**kwargs)
     app = TeamspeakNotifier()
     app.main()
